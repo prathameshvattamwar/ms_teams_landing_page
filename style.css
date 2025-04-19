@@ -1,0 +1,837 @@
+/* === Enhanced Teams Clone Styles === */
+
+/* Basic Reset & Defaults */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow: hidden; /* Prevent body scroll */
+    font-size: 14px;
+    color: #1f1f1f; /* Slightly darker default text */
+    background-color: var(--teams-bg-window); /* Background behind the app */
+}
+
+/* Color Palette (Refined Approximate Teams colors) */
+:root {
+    --teams-purple: #464775;
+    --teams-purple-dark: #33344A;
+    --teams-bg-light: #F5F5F5;       /* List pane background */
+    --teams-bg-medium: #E1E1E1;      /* Hover states, borders */
+    --teams-bg-white: #FFFFFF;       /* Content background, inputs */
+    --teams-bg-window: #EDEBE9;      /* Area outside the main grid */
+    --teams-text-primary: #1f1f1f;
+    --teams-text-secondary: #605E5C;
+    --teams-text-tertiary: #a19f9d;
+    --teams-text-white: #FFFFFF;
+    --teams-border-light: #D1D1D1;
+    --teams-border-medium: #c8c6c4;
+    --teams-hover-bg: #EDEBE9;
+    --teams-active-bg: #E1E1E1; /* Selected item in list */
+    --teams-accent: #6264A7;       /* Primary interactive color */
+    --teams-accent-hover: #4F528C;
+    --sent-message-bg: #E5E5F1;
+    --received-message-bg: var(--teams-bg-white);
+    --presence-available: #90ee90; /* Lighter green */
+    --unread-badge-bg: var(--teams-accent);
+    --top-bar-bg: #F3F2F1;
+    --separator-color: #e1e1e1;
+    --reaction-bg-hover: #f3f2f1;
+    --disabled-color: #b0b0b0;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: var(--teams-text-secondary);
+    transition: color 0.2s ease, background-color 0.2s ease;
+    font-family: inherit;
+}
+
+button:hover:not(:disabled) {
+    color: var(--teams-text-primary);
+}
+
+button:disabled,
+button:disabled i {
+    color: var(--disabled-color) !important;
+    cursor: not-allowed;
+}
+
+/* Overall App Container Layout */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Top Bar Styling */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background-color: var(--top-bar-bg);
+    border-bottom: 1px solid var(--teams-border-light);
+    height: 48px; /* Typical height */
+    flex-shrink: 0;
+}
+
+.top-bar-left {
+    display: flex;
+    align-items: center;
+}
+
+.menu-icon {
+    font-size: 18px;
+    padding: 0 15px;
+    color: var(--teams-text-secondary);
+    cursor: pointer;
+}
+
+.top-search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--teams-bg-white);
+    border: 1px solid var(--teams-border-medium);
+    border-radius: 4px;
+    padding: 4px 8px;
+    min-width: 250px;
+    margin-left: 10px;
+}
+
+.top-search-bar i {
+    color: var(--teams-text-secondary);
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.top-search-bar input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13px;
+    width: 100%;
+}
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    position: relative; /* For status dot */
+    cursor: pointer;
+}
+
+.user-avatar-top {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+.user-status-dot {
+    position: absolute;
+    bottom: 0px;
+    left: 18px; /* Adjust to position over avatar */
+    width: 10px;
+    height: 10px;
+    background-color: var(--presence-available);
+    border-radius: 50%;
+    border: 2px solid var(--top-bar-bg); /* Make it look inset */
+}
+
+.user-menu i {
+    color: var(--teams-text-secondary);
+}
+
+.window-controls {
+    display: flex;
+    align-items: center;
+}
+
+.window-controls span {
+    padding: 5px 12px;
+    font-size: 16px;
+    color: var(--teams-text-secondary);
+    cursor: pointer;
+}
+.window-controls span:hover {
+    background-color: var(--teams-hover-bg);
+    color: var(--teams-text-primary);
+}
+.window-controls span:last-child:hover {
+    background-color: #e81123; /* Red for close hover */
+    color: var(--teams-text-white);
+}
+
+
+/* Main App Layout Grid */
+.teams-app {
+    display: grid;
+    grid-template-columns: 60px minmax(280px, 350px) 1fr; /* Rail | List | Content */
+    flex-grow: 1; /* Take remaining height */
+    overflow: hidden; /* Prevent content bleed */
+    background-color: var(--teams-bg-white);
+}
+
+/* 1. App Rail */
+.app-rail {
+    background-color: var(--teams-purple-dark); /* Darker purple */
+    color: var(--teams-text-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px; /* Reduced top padding */
+}
+
+.rail-button {
+    color: #ccc;
+    background-color: transparent;
+    border: none;
+    padding: 12px 5px; /* Adjusted padding */
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    font-size: 11px; /* Slightly smaller text */
+    transition: background-color 0.1s ease, color 0.1s ease;
+    border-left: 3px solid transparent; /* For active state */
+    position: relative;
+}
+.rail-button.logo-button i {
+    font-size: 24px; /* Larger logo */
+    color: var(--teams-accent); /* Accent for logo maybe */
+}
+
+.rail-button i {
+    font-size: 22px; /* Icon size */
+    display: block;
+    margin-bottom: 4px;
+    line-height: 1;
+}
+
+.rail-button:hover {
+    color: var(--teams-text-white);
+}
+
+.rail-button.active {
+    background-color: transparent;
+    color: var(--teams-text-white);
+    border-left: 3px solid var(--teams-accent); /* Accent color border */
+}
+/* Specific override for active icon color */
+.rail-button.active i {
+     color: var(--teams-text-white);
+}
+
+.rail-spacer {
+    flex-grow: 1;
+}
+
+/* 2. List Pane */
+.list-pane {
+    background-color: var(--teams-bg-light);
+    border-right: 1px solid var(--teams-border-light);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px; /* Reduced padding */
+    border-bottom: 1px solid var(--teams-border-light);
+    background-color: var(--teams-bg-white);
+    flex-shrink: 0;
+}
+
+.list-header h2 {
+    font-size: 18px; /* Slightly larger */
+    font-weight: 600;
+    color: var(--teams-text-primary);
+}
+
+.list-header-actions button {
+    margin-left: 8px;
+    color: var(--teams-text-secondary);
+}
+.list-header-actions button:hover {
+    color: var(--teams-accent);
+}
+.list-header-actions button i {
+    font-size: 16px;
+}
+#new-item-button i {
+    color: var(--teams-accent); /* Keep new chat distinct */
+}
+#new-item-button:hover i {
+    color: var(--teams-accent-hover);
+}
+
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px; /* Reduced padding */
+    background-color: var(--teams-bg-white);
+    border-bottom: 1px solid var(--teams-border-light);
+     flex-shrink: 0;
+     position: relative;
+}
+
+.search-bar i.fa-magnifying-glass {
+    margin-right: 8px;
+    color: var(--teams-text-secondary);
+    font-size: 14px;
+}
+.search-bar i.clear-search-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--teams-text-secondary);
+    font-size: 12px;
+}
+.search-bar i.clear-search-btn:hover {
+    color: var(--teams-text-primary);
+}
+
+
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-size: 13px;
+}
+
+.item-list-container {
+    overflow-y: auto; /* Make list scrollable */
+    flex-grow: 1; /* Take remaining space */
+}
+.item-list {
+    list-style: none;
+}
+
+.list-section-header {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--teams-text-secondary);
+    padding: 10px 15px 5px;
+    text-transform: uppercase;
+    background-color: var(--teams-bg-light); /* Ensure it stands out */
+    position: sticky; /* Keep headers visible while scrolling */
+    top: 0;
+    z-index: 1;
+}
+
+
+.list-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px; /* Reduced padding */
+    cursor: pointer;
+    border-bottom: 1px solid transparent; /* Border only appears between items */
+    border-top: 1px solid transparent;
+    transition: background-color 0.1s ease;
+    position: relative; /* For unread badge */
+}
+/* Add border between items */
+.list-item + .list-item {
+    border-top: 1px solid var(--separator-color);
+}
+
+.list-item:hover {
+    background-color: var(--teams-hover-bg);
+}
+
+.list-item.active {
+    background-color: var(--teams-active-bg);
+    border-left: 3px solid var(--teams-accent); /* Indicate active with border too */
+    padding-left: 12px;
+}
+/* Ensure active state overrides hover */
+.list-item.active:hover {
+    background-color: var(--teams-active-bg);
+}
+
+
+.avatar-container {
+    position: relative;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ccc; /* Placeholder color */
+    display: block;
+}
+
+.presence-dot {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 12px;
+    height: 12px;
+    background-color: var(--presence-available);
+    border-radius: 50%;
+    border: 2px solid var(--teams-bg-light); /* Match list background */
+}
+.list-item.active .presence-dot {
+     border: 2px solid var(--teams-active-bg); /* Match active background */
+}
+
+
+.item-details {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--teams-text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px; /* Reduced margin */
+    font-size: 14px;
+}
+
+.item-timestamp {
+    font-size: 12px;
+    color: var(--teams-text-secondary);
+    font-weight: normal;
+    margin-left: 5px;
+    flex-shrink: 0;
+}
+
+.item-preview {
+    font-size: 13px;
+    color: var(--teams-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.unread-badge {
+    position: absolute;
+    top: 8px; /* Adjust as needed */
+    right: 15px;
+    background-color: var(--unread-badge-bg);
+    color: var(--teams-text-white);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1.3;
+}
+
+/* Placeholder style */
+.list-item-placeholder,
+.message-placeholder {
+    padding: 20px;
+    text-align: center;
+    color: var(--teams-text-secondary);
+    font-style: italic;
+}
+
+/* 3. Content Area */
+.content-area {
+    background-color: var(--teams-bg-white);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Reduced padding */
+    border-bottom: 1px solid var(--teams-border-light);
+    flex-shrink: 0;
+    min-height: 48px; /* Ensure consistent height */
+}
+
+.content-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.content-header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--teams-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px; /* Prevent overly long titles */
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between action buttons */
+}
+
+.header-icon-button {
+    padding: 6px;
+    border-radius: 4px;
+    color: var(--teams-text-secondary);
+}
+.header-icon-button:hover {
+    background-color: var(--teams-hover-bg);
+    color: var(--teams-text-primary);
+}
+.header-icon-button i {
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.meet-button {
+    background-color: var(--teams-accent);
+    color: var(--teams-text-white);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.meet-button i {
+    margin-right: 4px;
+     margin-left: 2px; /* For chevron */
+}
+.meet-button:hover {
+    background-color: var(--teams-accent-hover);
+    color: var(--teams-text-white);
+}
+
+.participant-info {
+    color: var(--teams-text-secondary);
+    font-size: 13px;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+#simulate-receive-button {
+    color: #107c10; /* Green */
+    background-color: #dff6dd;
+    border: 1px solid #aedfab;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+#simulate-receive-button i {
+    color: #107c10;
+    font-size: 14px;
+    margin-right: 4px;
+}
+#simulate-receive-button:hover {
+     background-color: #cceeca;
+     border-color: #94cf96;
+}
+
+
+/* Content Tabs */
+.content-tabs {
+    display: flex;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--teams-border-light);
+    flex-shrink: 0;
+}
+
+.tab-button {
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--teams-text-secondary);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px; /* Overlap border */
+}
+
+.tab-button.active {
+    color: var(--teams-accent);
+    border-bottom-color: var(--teams-accent);
+}
+
+.tab-button:not(.active):hover {
+    color: var(--teams-text-primary);
+    background-color: var(--teams-hover-bg);
+}
+.add-tab-button i {
+    color: var(--teams-accent);
+}
+
+.tab-content {
+     padding: 20px;
+}
+
+/* Message Area Layout */
+.message-area-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Contain message list and input */
+}
+
+/* Message List Styling */
+.message-list-container {
+    flex-grow: 1; /* Take available space */
+    overflow-y: auto; /* Enable scrolling for messages */
+    padding: 20px 20px 10px 20px; /* Add padding bottom */
+    display: flex;
+    flex-direction: column;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Minimal gap between messages from same sender */
+    width: 100%;
+}
+
+/* Date Separator */
+.message-date-separator {
+    text-align: center;
+    font-size: 12px;
+    color: var(--teams-text-secondary);
+    padding: 15px 0;
+    position: relative;
+}
+.message-date-separator::before,
+.message-date-separator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 60px); /* Adjust width based on text */
+    height: 1px;
+    background-color: var(--separator-color);
+}
+.message-date-separator::before { left: 0; }
+.message-date-separator::after { right: 0; }
+
+
+.message {
+    display: flex;
+    max-width: 75%; /* Max width of message */
+    margin-bottom: 10px; /* Space between different senders/blocks */
+    position: relative; /* For reactions */
+}
+
+.message .avatar { /* Avatar within message */
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ccc;
+    flex-shrink: 0;
+    margin-top: 5px; /* Align with first line of text */
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-sender {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--teams-text-secondary); /* Slightly muted sender name */
+}
+
+.message-bubble {
+    padding: 8px 12px;
+    border-radius: 18px;
+    line-height: 1.45;
+    word-wrap: break-word;
+    position: relative; /* For hover reactions */
+    transition: background-color 0.1s ease;
+}
+.message-bubble strong { font-weight: 600; } /* Ensure bold is actually bold */
+.message-bubble em { font-style: italic; }
+
+.message-time {
+    font-size: 11px;
+    color: var(--teams-text-tertiary); /* Muted timestamp */
+    margin-top: 4px;
+}
+
+/* Reactions Placeholder */
+.message-reactions-button {
+    position: absolute;
+    top: -15px; /* Position above the bubble */
+    right: 5px;
+    background-color: var(--teams-bg-white);
+    border: 1px solid var(--teams-border-light);
+    border-radius: 15px;
+    padding: 2px 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: none; /* Hidden by default */
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 2;
+}
+.message-bubble:hover .message-reactions-button {
+    display: inline-block; /* Show on hover */
+}
+.message-reactions-button:hover {
+    background-color: var(--reaction-bg-hover);
+}
+
+
+/* Received Messages */
+.message.received {
+    align-self: flex-start;
+}
+.message.received .avatar {
+    order: 1;
+    margin-right: 8px;
+}
+.message.received .message-content {
+    order: 2;
+    align-items: flex-start;
+}
+.message.received .message-bubble {
+    background-color: var(--received-message-bg);
+    border: 1px solid var(--separator-color);
+    border-top-left-radius: 4px; /* Flatter corner */
+    color: var(--teams-text-primary);
+}
+.message.received .message-time {
+     align-self: flex-start;
+     margin-left: 2px; /* Align with bubble start */
+}
+
+
+/* Sent Messages */
+.message.sent {
+    align-self: flex-end;
+}
+.message.sent .avatar {
+    display: none;
+}
+.message.sent .message-content {
+    order: 1;
+    align-items: flex-end;
+}
+.message.sent .message-sender {
+    display: none;
+}
+.message.sent .message-bubble {
+    background-color: var(--sent-message-bg);
+    color: var(--teams-text-primary);
+    border-top-right-radius: 4px; /* Flatter corner */
+}
+.message.sent .message-time {
+    align-self: flex-end;
+    display: flex; /* Align checkmark with time */
+    align-items: center;
+    gap: 4px;
+}
+.message.sent .read-receipt {
+    font-size: 14px; /* Adjust size */
+    color: var(--teams-text-tertiary); /* Default 'sent' color */
+}
+.message.sent .read-receipt.read {
+    color: var(--teams-accent); /* 'Read' color */
+}
+
+
+/* Typing Indicator */
+#typing-indicator {
+    padding: 5px 20px;
+    font-size: 12px;
+    color: var(--teams-text-secondary);
+    font-style: italic;
+    flex-shrink: 0; /* Don't let it shrink */
+    height: 20px; /* Reserve space */
+}
+#typing-indicator .typing-indicator-sender {
+    font-weight: 600;
+    font-style: normal;
+}
+
+
+/* Message Input Area */
+.message-input-area {
+    border-top: 1px solid var(--teams-border-light);
+    padding: 10px 20px 15px 20px;
+    background-color: var(--teams-bg-white);
+    flex-shrink: 0; /* Prevent input area shrinking */
+    position: relative; /* For send button positioning */
+}
+
+.input-toolbar {
+    margin-bottom: 8px;
+    display: flex;
+    gap: 10px;
+}
+
+.input-toolbar button {
+    padding: 3px;
+    font-size: 14px; /* Slightly larger icons */
+    color: var(--teams-text-secondary);
+}
+.input-toolbar button:hover:not(:disabled) {
+    color: var(--teams-accent);
+    background-color: var(--teams-hover-bg);
+    border-radius: 3px;
+}
+
+#message-input { /* Use ID for specificity */
+    width: 100%;
+    border: none;
+    resize: none;
+    padding: 8px 0; /* Match input style */
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    outline: none;
+    background-color: transparent;
+    max-height: 150px; /* Limit growth */
+    overflow-y: auto; /* Scroll if too tall */
+    margin-bottom: 5px;
+}
+#message-input:disabled {
+    background-color: var(--teams-bg-medium);
+    cursor: not-allowed;
+}
+
+#send-button {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    padding: 5px;
+}
+
+#send-button i {
+    font-size: 18px;
+    color: var(--teams-accent);
+}
+#send-button:hover:not(:disabled) i {
+    color: var(--teams-accent-hover);
+}
+#send-button:disabled i {
+     color: var(--disabled-color);
+}
